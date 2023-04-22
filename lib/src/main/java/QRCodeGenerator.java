@@ -25,6 +25,6 @@ public class QRCodeGenerator {
 		generationBitMatrix.generateBitMatrix(qrCodeData);
 
 		BitMatrixToImage bitMatrixToImage = new BitMatrixToImage();
-		bitMatrixToImage.generateImage(qrCodeData);
+		bitMatrixToImage.generateImage(qrCodeData, 10);
     }
 }

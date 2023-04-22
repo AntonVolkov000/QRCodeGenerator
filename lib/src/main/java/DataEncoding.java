@@ -13,6 +13,7 @@ public class DataEncoding {
 
 	private final static int BIT_NUMBER_FOR_TWO_DIGIT_DYAD_NUMBER = 11;
 	private final static int BIT_NUMBER_FOR_SINGLE_DIGIT_DYAD_NUMBER = 6;
+	private final static int EXPRESSION_MULTIPLIER_FOR_ALPHANUMERIC = 45;
 
 	private final static Map<Character, Integer> alphanumericCodes = Map.ofEntries(
 			Map.entry('0', 0), Map.entry('1', 1), Map.entry('2', 2), Map.entry('3', 3), Map.entry('4', 4), Map.entry('5', 5), Map.entry('6', 6), Map.entry('7', 7), Map.entry('8', 8), Map.entry('9', 9),
@@ -69,7 +70,7 @@ public class DataEncoding {
 			if (bitDyad.length() == 2) {
 				int firstCode = alphanumericCodes.get(bitDyad.charAt(0));
 				int secondCode = alphanumericCodes.get(bitDyad.charAt(1));
-				int result = firstCode * 45 + secondCode;
+				int result = firstCode * EXPRESSION_MULTIPLIER_FOR_ALPHANUMERIC + secondCode;
 				addNumberByBitNumber(result, bitSequence, BIT_NUMBER_FOR_TWO_DIGIT_DYAD_NUMBER);
 				bitDyad = new StringBuilder();
 			}

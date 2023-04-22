@@ -8,9 +8,8 @@ import java.io.IOException;
 
 public class BitMatrixToImage {
 
-    public void generateImage(QRCodeData qrCodeData) {
+    public void generateImage(QRCodeData qrCodeData, int scale) {
         int[][] bitMatrix =  qrCodeData.getBitMatrix();
-        int scale = 10;
         try {
             int bitMatrixLength = bitMatrix.length;
             BufferedImage image = new BufferedImage(bitMatrixLength * scale, bitMatrixLength * scale, BufferedImage.TYPE_INT_RGB);

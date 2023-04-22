@@ -68,9 +68,7 @@ public class ServiceData {
             if (newBitSequenceLength > maxDataBitAmount) {
                 qrCodeVersion++;
                 if (qrCodeVersion > MAX_QRCODE_VERSION) {
-                    break;
-//                    throw new NumberNotInRangeException();
-                    // Ошибка, нет подходящей версии, входные данные слишком большие
+                    throw new IllegalArgumentException("Нет подходящей версии qr-кода, входные данные слишком большие");
                 }
             } else {
                 break;
@@ -105,8 +103,7 @@ public class ServiceData {
                 return i + 1;
             }
         }
-        // Ошибка, нет подходящей версии, входные данные слишком большие
-        return -1;
+        throw new IllegalArgumentException("Нет подходящей версии qr-кода, входные данные слишком большие");
     }
 
     private String getAdditionalZeros(int newBitSequenceLength) {

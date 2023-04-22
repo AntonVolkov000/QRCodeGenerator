@@ -32,23 +32,39 @@ public class GenerationBitMatrix {
             {"001011010001001","001001110111110","001110011100111","001100111010000","000011101100010","000001001010101","000110100001100","000100000111011"}
     };
 
-    private final static int qrCodeWithVersion1MatrixSize = 21;
-    private final static int additionalBitForQRCodeWithVersion2_40 = 7;
-    private final static int externalMarginsSize = 4;
+    private final static int MATRIX_SIZE_FOR_VERSION_1 = 21;
+    private final static int ADDITIONAL_SIZE_FOR_MATRIX_SIZE_WITH_VERSION_2_40 = 7;
     private final static int ZERO_BIT = 0;
     private final static int ONE_BIT = 1;
     private final static int MASK_NUMBER = 0;
     private int bitIndex = 0;
+    private final static int START_VERSION_FOR_LEVELING_PATTERNS = 2;
+    private final static int START_VERSION_FOR_QRCODE_VERSION = 7;
+    private final static int SEARCH_PATTERN_SIZE = 7;
+    private final static int SIZE_OF_WHITE_LINE_SEARCH_PATTERN = 8;
+    private final static int END_OF_SEARCH_BLACK_BORDER = 6;
+    private final static int START_OF_SEARCH_BLACK_INNER = 2;
+    private final static int END_OF_SEARCH_BLACK_INNER = 4;
+    private final static int LEVELING_PATTERN_SIZE = 5;
+    private final static int END_OF_LEVELING_BLACK_BORDER = 4;
+    private final static int INDENT_OF_SYNC_BANDS = 6;
+    private final static int INDENT_OF_QRCODE_VERSION = 8;
+    private final static Character ZERO_BIT_CHAR = '0';
+    private final static int LEFT_DOUBLE_COLUMNS_NUMBER = 3;
+    private final static int MASK_LOCATION = 8;
+    private final static int SHIFT_FOR_SINGLE_COLUMN = 1;
+    private final static int SHIFT_FOR_DOUBLE_COLUMN = 2;
+    private final static int EXTERNAL_MARGIN_SIZE = 4;
 
     public void generateBitMatrix(QRCodeData qrCodeData) {
         int qrCodeVersion = qrCodeData.getQRCodeVersion();
         int[] levelingPatternsLocation = levelingPatternsLocationMatrix[qrCodeVersion - 1];
         int matrixSizeWEM; // matrixSizeWithoutExternalMargins
         if (qrCodeVersion == 1) {
-            matrixSizeWEM = qrCodeWithVersion1MatrixSize;
+            matrixSizeWEM = MATRIX_SIZE_FOR_VERSION_1;
         } else {
             int lastLocation = levelingPatternsLocation[levelingPatternsLocation.length - 1];
-            matrixSizeWEM = lastLocation + additionalBitForQRCodeWithVersion2_40;
+            matrixSizeWEM = lastLocation + ADDITIONAL_SIZE_FOR_MATRIX_SIZE_WITH_VERSION_2_40;
         }
         int[][] bitMatrixWEM = new int[matrixSizeWEM][matrixSizeWEM];
         for (int i = 0; i < matrixSizeWEM; i++) {
@@ -57,11 +73,11 @@ public class GenerationBitMatrix {
             }
         }
         addSearchPatterns(bitMatrixWEM, matrixSizeWEM);
-        if (qrCodeVersion > 1) {
+        if (qrCodeVersion >= START_VERSION_FOR_LEVELING_PATTERNS) {
             addLevelingPatterns(bitMatrixWEM, levelingPatternsLocation);
         }
         addSyncBands(bitMatrixWEM, matrixSizeWEM);
-        if (qrCodeVersion > 6) {
+        if (qrCodeVersion >= START_VERSION_FOR_QRCODE_VERSION) {
             addQRCodeVersion(bitMatrixWEM, matrixSizeWEM, qrCodeVersion);
         }
         addMaskAndCorrectionLevelCode(bitMatrixWEM, matrixSizeWEM, qrCodeData.getCorrectionLevel().getLevelIndex());
@@ -72,26 +88,30 @@ public class GenerationBitMatrix {
 
     private void addSearchPatterns(int[][] bitMatrixWEM, int matrixSizeWEM) {
         addSearchPattern(bitMatrixWEM, 0, 0);
-        addSearchPattern(bitMatrixWEM, 0, matrixSizeWEM - 7);
-        addSearchPattern(bitMatrixWEM, matrixSizeWEM - 7, 0);
+        addSearchPattern(bitMatrixWEM, 0, matrixSizeWEM - SEARCH_PATTERN_SIZE);
+        addSearchPattern(bitMatrixWEM, matrixSizeWEM - SEARCH_PATTERN_SIZE, 0);
         for (int i = 0; i < matrixSizeWEM; i++) {
-            if (i <= 7 || i >= matrixSizeWEM - 7) {
-                bitMatrixWEM[7][i] = ZERO_BIT;
-                bitMatrixWEM[i][7] = ZERO_BIT;
+            if (i <= SEARCH_PATTERN_SIZE || i >= matrixSizeWEM - SEARCH_PATTERN_SIZE) {
+                bitMatrixWEM[SEARCH_PATTERN_SIZE][i] = ZERO_BIT;
+                bitMatrixWEM[i][SEARCH_PATTERN_SIZE] = ZERO_BIT;
             }
         }
-        for (int i = 0; i < 8; i++) {
-            bitMatrixWEM[i][matrixSizeWEM - 8] = ZERO_BIT;
-            bitMatrixWEM[matrixSizeWEM - 8][i] = ZERO_BIT;
+        for (int i = 0; i < SIZE_OF_WHITE_LINE_SEARCH_PATTERN; i++) {
+            bitMatrixWEM[i][matrixSizeWEM - SIZE_OF_WHITE_LINE_SEARCH_PATTERN] = ZERO_BIT;
+            bitMatrixWEM[matrixSizeWEM - SIZE_OF_WHITE_LINE_SEARCH_PATTERN][i] = ZERO_BIT;
         }
     }
 
     private void addSearchPattern(int[][] bitMatrixWEM, int x, int y) {
-        for (int i = x; i < x + 7; i++) {
-            for (int j = y; j < y + 7; j++) {
-                boolean isBlackBroder = i == x || i == x + 6 || j == y || j == y + 6;
-                boolean isBlackInnerSquare = i >= x + 2 && i <= x + 4 && j >= y + 2 && j <= y + 4;
-                if (isBlackBroder || isBlackInnerSquare) {
+        for (int i = x; i < x + SEARCH_PATTERN_SIZE; i++) {
+            for (int j = y; j < y + SEARCH_PATTERN_SIZE; j++) {
+                boolean isBlackBorder =
+                        i == x || i == x + END_OF_SEARCH_BLACK_BORDER
+                                || j == y || j == y + END_OF_SEARCH_BLACK_BORDER;
+                boolean isBlackInnerSquare =
+                        i >= x + START_OF_SEARCH_BLACK_INNER && i <= x + END_OF_SEARCH_BLACK_INNER
+                                && j >= y + START_OF_SEARCH_BLACK_INNER && j <= y + END_OF_SEARCH_BLACK_INNER;
+                if (isBlackBorder || isBlackInnerSquare) {
                     bitMatrixWEM[i][j] = ONE_BIT;
                 } else {
                     bitMatrixWEM[i][j] = ZERO_BIT;
@@ -107,7 +127,8 @@ public class GenerationBitMatrix {
                 int x = levelingPatternsLocation[i];
                 int y = levelingPatternsLocation[j];
                 if (!existIntersectionForLevelingPatterns(bitMatrixWEM, x, y)) {
-                    addLevelingPattern(bitMatrixWEM, x - 2, y - 2);
+                    int centreLevelingPattern = LEVELING_PATTERN_SIZE / 2;
+                    addLevelingPattern(bitMatrixWEM, x - centreLevelingPattern, y - centreLevelingPattern);
                 }
             }
         }
@@ -115,11 +136,11 @@ public class GenerationBitMatrix {
 
     private boolean existIntersectionForLevelingPatterns(int[][] bitMatrixWEM, int x, int y) {
         boolean existIntersection = false;
-        for (int i = x; i < x + 5; i++) {
+        for (int i = x; i < x + LEVELING_PATTERN_SIZE; i++) {
             if (existIntersection) {
                 break;
             }
-            for (int j = y; j < y + 5; j++) {
+            for (int j = y; j < y + LEVELING_PATTERN_SIZE; j++) {
                 if (bitMatrixWEM[i][j] != -1) {
                     existIntersection = true;
                     break;
@@ -130,9 +151,15 @@ public class GenerationBitMatrix {
     }
 
     private void addLevelingPattern(int[][] bitMatrixWEM, int x, int y) {
-        for (int i = x; i < x + 5; i++) {
-            for (int j = y; j < y + 5; j++) {
-                if (i == x || i == x + 4 || j == y || j == y + 4 || (i == x + 2 && j == y + 2)) {
+        for (int i = x; i < x + LEVELING_PATTERN_SIZE; i++) {
+            for (int j = y; j < y + LEVELING_PATTERN_SIZE; j++) {
+                boolean isBlackBorder =
+                        i == x || i == x + END_OF_LEVELING_BLACK_BORDER
+                                || j == y || j == y + END_OF_LEVELING_BLACK_BORDER;
+                int centreLevelingPattern = LEVELING_PATTERN_SIZE / 2;
+                boolean isBlackInnerSquare =
+                        i == x + centreLevelingPattern && j == y + centreLevelingPattern;
+                if (isBlackBorder || isBlackInnerSquare) {
                     bitMatrixWEM[i][j] = ONE_BIT;
                 } else {
                     bitMatrixWEM[i][j] = ZERO_BIT;
@@ -142,12 +169,12 @@ public class GenerationBitMatrix {
     }
 
     private void addSyncBands(int[][] bitMatrixWEM, int matrixSizeWEM) {
-        for (int i = 6; i < matrixSizeWEM - 6; i++) {
-            if (bitMatrixWEM[i][6] == -1) {
-                bitMatrixWEM[i][6] = i % 2 == 0 ? ONE_BIT : ZERO_BIT;
+        for (int i = INDENT_OF_SYNC_BANDS; i < matrixSizeWEM - INDENT_OF_SYNC_BANDS; i++) {
+            if (bitMatrixWEM[i][INDENT_OF_SYNC_BANDS] == -1) {
+                bitMatrixWEM[i][INDENT_OF_SYNC_BANDS] = i % 2 == 0 ? ONE_BIT : ZERO_BIT;
             }
-            if (bitMatrixWEM[6][i] == -1) {
-                bitMatrixWEM[6][i] = i % 2 == 0 ? ONE_BIT : ZERO_BIT;
+            if (bitMatrixWEM[INDENT_OF_SYNC_BANDS][i] == -1) {
+                bitMatrixWEM[INDENT_OF_SYNC_BANDS][i] = i % 2 == 0 ? ONE_BIT : ZERO_BIT;
             }
         }
     }
@@ -158,10 +185,10 @@ public class GenerationBitMatrix {
         for (int i = 0; i < versionCodeLength; i++) {
             String partVersionCode = qrCodeVersionCode[i];
             int partVCLength = partVersionCode.length();
-            int x = matrixSizeWEM - 8 - (versionCodeLength - i);
+            int x = matrixSizeWEM - INDENT_OF_QRCODE_VERSION - (versionCodeLength - i);
             for (int j = 0; j < partVCLength; j++) {
                 char bitChar = partVersionCode.charAt(j);
-                int bit = bitChar == '1' ? ONE_BIT : ZERO_BIT;
+                int bit = bitChar == ZERO_BIT_CHAR ? ZERO_BIT : ONE_BIT;
                 bitMatrixWEM[x][j] = bit;
                 bitMatrixWEM[j][x] = bit;
             }
@@ -171,37 +198,41 @@ public class GenerationBitMatrix {
     private void addMaskAndCorrectionLevelCode(int[][] bitMatrixWEM, int matrixSizeWEM, int levelIndex) {
         String maskAndCorrectionLevelCode = maskAndCorrectionLevelCodes[levelIndex][MASK_NUMBER];
         int i = 0;
-        for (int j = 0; j < 9; j++) {
-            if (bitMatrixWEM[8][j] == -1) {
-                bitMatrixWEM[8][j] = getCodeBit(maskAndCorrectionLevelCode, i);
+        int start = 0;
+        int end = MASK_LOCATION + 1;
+        for (int j = start; j < end; j++) {
+            if (bitMatrixWEM[MASK_LOCATION][j] == -1) {
+                bitMatrixWEM[MASK_LOCATION][j] = getCodeBit(maskAndCorrectionLevelCode, i);
                 i++;
             }
         }
-        for (int j = 7; j >= 0; j--) {
-            if (bitMatrixWEM[j][8] == -1) {
-                bitMatrixWEM[j][8] = getCodeBit(maskAndCorrectionLevelCode, i);
+        end = MASK_LOCATION - 1;
+        start = 0;
+        for (int j = end; j >= 0; j--) {
+            if (bitMatrixWEM[j][MASK_LOCATION] == -1) {
+                bitMatrixWEM[j][MASK_LOCATION] = getCodeBit(maskAndCorrectionLevelCode, i);
                 i++;
             }
         }
         i = 0;
-        int end = matrixSizeWEM - 1;
-        int start = matrixSizeWEM - 7;
+        end = matrixSizeWEM - 1;
+        start = matrixSizeWEM - (MASK_LOCATION - 1);
         for (int j = end; j >= start; j--) {
-            bitMatrixWEM[j][8] = getCodeBit(maskAndCorrectionLevelCode, i);
+            bitMatrixWEM[j][MASK_LOCATION] = getCodeBit(maskAndCorrectionLevelCode, i);
             i++;
         }
-        start = matrixSizeWEM - 8;
+        bitMatrixWEM[matrixSizeWEM - MASK_LOCATION][MASK_LOCATION] = ONE_BIT;
+        start = matrixSizeWEM - MASK_LOCATION;
         end = matrixSizeWEM;
-        bitMatrixWEM[matrixSizeWEM - 8][8] = ONE_BIT;
         for (int j = start; j < end; j++) {
-            bitMatrixWEM[8][j] = getCodeBit(maskAndCorrectionLevelCode, i);
+            bitMatrixWEM[MASK_LOCATION][j] = getCodeBit(maskAndCorrectionLevelCode, i);
             i++;
         }
     }
 
     private int getCodeBit(String maskAndCorrectionLevelCode, int i) {
         char bitChar = maskAndCorrectionLevelCode.charAt(i);
-        return bitChar == '1' ? ONE_BIT : ZERO_BIT;
+        return bitChar == ZERO_BIT_CHAR ? ZERO_BIT : ONE_BIT;
     }
 
     private void addQRCodeBitSequence(int[][] bitMatrixWEM, int matrixSizeWEM, StringBuilder bitSequence) {
@@ -209,18 +240,18 @@ public class GenerationBitMatrix {
         bitIndex = 0;
         int y = matrixSizeWEM - 1;
         for (int i = 0; i < doubleColumnsNumber; i++) {
-            if (i == doubleColumnsNumber - 3) {
-                y -= 1;
+            if (i == doubleColumnsNumber - LEFT_DOUBLE_COLUMNS_NUMBER) {
+                y -= SHIFT_FOR_SINGLE_COLUMN;
             } else if (i % 2 == 0) {
                 for (int j = matrixSizeWEM - 1; j >= 0; j--) {
                     fillDoubleColumn(bitMatrixWEM, bitSequence, j, y);
                 }
-                y -= 2;
+                y -= SHIFT_FOR_DOUBLE_COLUMN;
             } else {
                 for (int j = 0; j < matrixSizeWEM; j++) {
                     fillDoubleColumn(bitMatrixWEM, bitSequence, j, y);
                 }
-                y -= 2;
+                y -= SHIFT_FOR_DOUBLE_COLUMN;
             }
         }
     }
@@ -244,7 +275,7 @@ public class GenerationBitMatrix {
             return ZERO_BIT;
         }
         char bitChar = bitSequence.charAt(i);
-        return bitChar == '1' ? ONE_BIT : ZERO_BIT;
+        return bitChar == ZERO_BIT_CHAR ? ZERO_BIT : ONE_BIT;
     }
 
     private int applyMask(int bit, int x, int y) {
@@ -256,15 +287,15 @@ public class GenerationBitMatrix {
     }
 
     private int[][] addExternalMargins(int[][] bitMatrixWEM, int matrixSizeWEM) {
-        int[][] bitMatrix = new int[matrixSizeWEM + 8][matrixSizeWEM + 8];
-        int endMatrixWEM = matrixSizeWEM + 4;
-        for (int i = 4; i < endMatrixWEM; i++) {
-            for (int j = 4; j < endMatrixWEM; j++) {
+        int[][] bitMatrix = new int[matrixSizeWEM + EXTERNAL_MARGIN_SIZE * 2][matrixSizeWEM + EXTERNAL_MARGIN_SIZE * 2];
+        int endMatrixWEM = matrixSizeWEM + EXTERNAL_MARGIN_SIZE;
+        for (int i = EXTERNAL_MARGIN_SIZE; i < endMatrixWEM; i++) {
+            for (int j = EXTERNAL_MARGIN_SIZE; j < endMatrixWEM; j++) {
                 int bit;
-                if (bitMatrixWEM[i - 4][j - 4] == -1) {
+                if (bitMatrixWEM[i - EXTERNAL_MARGIN_SIZE][j - EXTERNAL_MARGIN_SIZE] == -1) {
                     bit = ZERO_BIT;
                 } else {
-                    bit = bitMatrixWEM[i - 4][j - 4];
+                    bit = bitMatrixWEM[i - EXTERNAL_MARGIN_SIZE][j - EXTERNAL_MARGIN_SIZE];
                 }
                 bitMatrix[i][j] = bit;
             }

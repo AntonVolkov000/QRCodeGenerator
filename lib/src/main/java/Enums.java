@@ -74,7 +74,7 @@ public class Enums {
                     return versionType;
                 }
             }
-            return null;
+            throw new IllegalArgumentException("Нет подходящей версии qr-кода, входные данные слишком большие");
         }
     }
 }
