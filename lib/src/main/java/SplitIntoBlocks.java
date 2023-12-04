@@ -1,10 +1,6 @@
-package main.java;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
-import static main.java.Constants.BYTE_SIZE;
 
 public class SplitIntoBlocks {
 
@@ -20,7 +16,7 @@ public class SplitIntoBlocks {
         int levelIndex = qrCodeData.getCorrectionLevel().getLevelIndex();
         int qrCodeVersion = qrCodeData.getQRCodeVersion();
         int blockAmount = blockAmountMatrix[levelIndex][qrCodeVersion - 1];
-        int byteAmount = qrCodeData.getBitSequence().length() / BYTE_SIZE;
+        int byteAmount = qrCodeData.getBitSequence().length() / Constants.BYTE_SIZE;
 
         if (blockAmount == 1) {
             List<LinkedList<Integer>> blocks = new ArrayList<>();
@@ -38,7 +34,7 @@ public class SplitIntoBlocks {
                 if (blockAmount - i == additionalAmount) {
                     blockSize++;
                 }
-                int curIndex = prevIndex + blockSize * BYTE_SIZE;
+                int curIndex = prevIndex + blockSize * Constants.BYTE_SIZE;
                 blocks.add(createBlock(bitSequence.substring(prevIndex, curIndex), blockSize));
                 prevIndex = curIndex;
             }
@@ -50,7 +46,7 @@ public class SplitIntoBlocks {
     private LinkedList<Integer> createBlock(String binaryString, int byteAmount) {
         LinkedList<Integer> block = new LinkedList<>();
         for (int i = 0; i < byteAmount; i++) {
-            String binayString = binaryString.substring(i * BYTE_SIZE, (i + 1) * BYTE_SIZE);
+            String binayString = binaryString.substring(i * Constants.BYTE_SIZE, (i + 1) * Constants.BYTE_SIZE);
             block.add(Integer.parseInt(binayString, 2));
         }
         return block;

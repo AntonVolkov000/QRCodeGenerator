@@ -1,9 +1,5 @@
-package main.java;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-
-import static main.java.Constants.ZERO_BIT_STR;
 
 public class DataEncoding {
 
@@ -37,7 +33,7 @@ public class DataEncoding {
 	private StringBuilder digitalEncoding(String data) {
 		StringBuilder bitSequence = new StringBuilder();
 		StringBuilder bitTriad = new StringBuilder();
-		for (int i = 0 ; i < data.length(); i++) {
+		for (int i = 0; i < data.length(); i++) {
 			bitTriad.append(data.charAt(i));
 			if (bitTriad.length() == 3) {
 				addStringBuilderByBitNumber(bitTriad, bitSequence, BIT_NUMBER_FOR_THREE_DIGIT_TRIAD_NUMBER);
@@ -57,7 +53,7 @@ public class DataEncoding {
 
 	private void addStringBuilderByBitNumber(StringBuilder bits, StringBuilder bitSequence, int bitNumber) {
 		String binary = Integer.toBinaryString(Integer.parseInt(bits.toString()));
-		String zeros = ZERO_BIT_STR.repeat(bitNumber - binary.length());
+		String zeros = Constants.ZERO_BIT_STR.repeat(bitNumber - binary.length());
 		bitSequence.append(zeros).append(binary);
 	}
 	
@@ -75,8 +71,8 @@ public class DataEncoding {
 				bitDyad = new StringBuilder();
 			}
 		}
-		int bitTriadLength = bitDyad.length();
-		if (bitTriadLength > 0) {
+		int bitDyadLength = bitDyad.length();
+		if (bitDyadLength > 0) {
 			int code = alphanumericCodes.get(bitDyad.charAt(0));
 			addNumberByBitNumber(code, bitSequence, BIT_NUMBER_FOR_SINGLE_DIGIT_DYAD_NUMBER);
 		}
@@ -94,7 +90,7 @@ public class DataEncoding {
 
 	private void addNumberByBitNumber(int number, StringBuilder bitSequence, int bitNumber) {
 		String binary = Integer.toBinaryString(number);
-		String zeros = ZERO_BIT_STR.repeat(bitNumber - binary.length());
+		String zeros = Constants.ZERO_BIT_STR.repeat(bitNumber - binary.length());
 		bitSequence.append(zeros).append(binary);
 	}
 }

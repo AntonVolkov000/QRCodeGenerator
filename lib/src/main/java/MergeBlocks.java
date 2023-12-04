@@ -1,9 +1,5 @@
-package main.java;
-
 import java.util.LinkedList;
 import java.util.List;
-
-import static main.java.Constants.ZERO_BIT_STR;
 
 public class MergeBlocks {
 
@@ -34,7 +30,7 @@ public class MergeBlocks {
 
     private void addByteToBitSequence(int blockByte, StringBuilder mergedBitSequence) {
         String binary = Integer.toBinaryString(blockByte);
-        String zeros = ZERO_BIT_STR.repeat(Constants.BYTE_SIZE - binary.length());
+        String zeros = Constants.ZERO_BIT_STR.repeat(Constants.BYTE_SIZE - binary.length());
         mergedBitSequence.append(zeros).append(binary);
     }
 }

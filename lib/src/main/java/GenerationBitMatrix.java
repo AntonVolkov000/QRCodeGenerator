@@ -1,5 +1,3 @@
-package main.java;
-
 public class GenerationBitMatrix {
 
     // Индекс - номер версии минус единица, значение - расположение центра выравнивающих узоров

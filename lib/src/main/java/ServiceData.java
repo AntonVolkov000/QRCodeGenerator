@@ -1,9 +1,4 @@
-package main.java;
-
 import java.nio.charset.StandardCharsets;
-
-import static main.java.Constants.BYTE_SIZE;
-import static main.java.Constants.ZERO_BIT_STR;
 
 public class ServiceData {
 
@@ -37,18 +32,10 @@ public class ServiceData {
         } else {
             dataAmount = qrCodeData.getData().length();
         }
-        StringBuilder dataAmountBit = new StringBuilder();
-        addNumberByBitNumber(dataAmount, dataAmountBit, BYTE_SIZE);
-        addServiceFields(qrCodeData, qrCodeVersion, dataAmountBit);
+        addServiceFields(qrCodeData, qrCodeVersion, dataAmount);
     }
 
-    private void addNumberByBitNumber(int number, StringBuilder bitSequence, int bitNumber) {
-        String binary = Integer.toBinaryString(number);
-        String zeros = ZERO_BIT_STR.repeat(bitNumber - binary.length());
-        bitSequence.append(zeros).append(binary);
-    }
-
-    private void addServiceFields(QRCodeData qrCodeData, int qrCodeVersion, StringBuilder dataAmountBit) {
+    private void addServiceFields(QRCodeData qrCodeData, int qrCodeVersion, int dataAmount) {
         int bitSequenceLength = qrCodeData.getBitSequence().length();
         Enums.EncodingType encodingType = qrCodeData.getEncodingType();
 
@@ -76,22 +63,24 @@ public class ServiceData {
         }
         qrCodeData.setQRCodeVersion(qrCodeVersion);
 
-        StringBuilder newDataAmountBit = new StringBuilder();
-        String zeros = ZERO_BIT_STR.repeat(dataAmountFieldBitAmount - dataAmountBit.length());
-        newDataAmountBit.append(zeros).append(dataAmountBit);
+        String dataAmountBit = Integer.toBinaryString(dataAmount);
+        if (dataAmountBit.length() < dataAmountFieldBitAmount) {
+            dataAmountBit = addZerosInDataAmountBit(dataAmountBit, dataAmountFieldBitAmount);
+        }
 
         String additionalZeros = getAdditionalZeros(newBitSequenceLength);
         newBitSequenceLength += additionalZeros.length();
 
         StringBuilder additionalBytes = getAdditionalBytes(newBitSequenceLength, maxDataBitAmount);
 
-        qrCodeData.setBitSequence(new StringBuilder()
-                .append(encodingType.getEncodingBits())
-                .append(newDataAmountBit)
-                .append(qrCodeData.getBitSequence())
-                .append(additionalZeros)
-                .append(additionalBytes)
-        );
+        StringBuilder bitSequence = new StringBuilder();
+        bitSequence.append(encodingType.getEncodingBits());
+        bitSequence.append(dataAmountBit);
+        bitSequence.append(qrCodeData.getBitSequence());
+        bitSequence.append(additionalZeros);
+        bitSequence.append(additionalBytes);
+
+        qrCodeData.setBitSequence(bitSequence);
     }
 
     private int getQRCodeVersion(QRCodeData qrCodeData) {
@@ -106,10 +95,17 @@ public class ServiceData {
         throw new IllegalArgumentException("Нет подходящей версии qr-кода, входные данные слишком большие");
     }
 
+    private String addZerosInDataAmountBit(String dataAmountBit, int dataAmountFieldBitAmount) {
+        StringBuilder dataAmountBitFilled = new StringBuilder();
+        String zeros = Constants.ZERO_BIT_STR.repeat(dataAmountFieldBitAmount - dataAmountBit.length());
+        dataAmountBitFilled.append(zeros).append(dataAmountBit);
+        return dataAmountBitFilled.toString();
+    }
+
     private String getAdditionalZeros(int newBitSequenceLength) {
-        int remains = newBitSequenceLength % BYTE_SIZE;
+        int remains = newBitSequenceLength % Constants.BYTE_SIZE;
         if (remains != 0) {
-            return ZERO_BIT_STR.repeat(BYTE_SIZE - remains);
+            return Constants.ZERO_BIT_STR.repeat(Constants.BYTE_SIZE - remains);
         }
         return "";
     }
@@ -117,7 +113,7 @@ public class ServiceData {
     private StringBuilder getAdditionalBytes(int newBitSequenceLength, int maxDataBitAmount) {
         StringBuilder additionalBytes = new StringBuilder();
         if (newBitSequenceLength < maxDataBitAmount) {
-            int missingBytesNumber = (maxDataBitAmount - newBitSequenceLength) / BYTE_SIZE;
+            int missingBytesNumber = (maxDataBitAmount - newBitSequenceLength) / Constants.BYTE_SIZE;
             for (int i = 0; i < missingBytesNumber; i++) {
                 if (i % 2 == 0) {
                     additionalBytes.append(FIRST_ADDITIONAL_BYTE);

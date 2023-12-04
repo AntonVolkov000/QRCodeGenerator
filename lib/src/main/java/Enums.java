@@ -1,5 +1,3 @@
-package main.java;
-
 public class Enums {
     public enum EncodingType {
         DIGITAL(0, "0001"),

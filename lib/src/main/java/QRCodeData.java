@@ -1,13 +1,11 @@
-package main.java;
-
 import java.util.LinkedList;
 import java.util.List;
 
 public class QRCodeData {
     private String data;
     private StringBuilder bitSequence;
-    private Enums.EncodingType encodingType = Enums.EncodingType.BYTE;
-    private Enums.CorrectionLevel correctionLevel = Enums.CorrectionLevel.M;
+    private Enums.EncodingType encodingType;
+    private Enums.CorrectionLevel correctionLevel;
     private int qrCodeVersion;
     private List<LinkedList<Integer>> blocks;
     private List<LinkedList<Integer>> correctionBytesBlocks;
@@ -16,12 +14,8 @@ public class QRCodeData {
 
     QRCodeData(String data, Enums.EncodingType encodingType, Enums.CorrectionLevel correctionLevel) {
         this.data = data;
-        if (encodingType != null) {
-            this.encodingType = encodingType;
-        }
-        if (correctionLevel != null) {
-            this.correctionLevel = correctionLevel;
-        }
+        this.encodingType = encodingType;
+        this.correctionLevel = correctionLevel;
     }
 
     public String getData() {
