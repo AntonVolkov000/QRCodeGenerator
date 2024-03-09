@@ -14,8 +14,22 @@ class DigitalTest {
     }
 
     @Test
+    public void smallDigitalL2() throws NotFoundException, ChecksumException, FormatException {
+        String data = "11";
+        String recognizedData = QRCodeGenerationAndRecognition.generateAndRecognizeQRCode(data, Enums.EncodingType.DIGITAL, Enums.CorrectionLevel.L);
+        assertEquals(data, recognizedData);
+    }
+
+    @Test
     public void middleDigitalL() throws NotFoundException, ChecksumException, FormatException {
         String data = "01234567890123456789";
+        String recognizedData = QRCodeGenerationAndRecognition.generateAndRecognizeQRCode(data, Enums.EncodingType.DIGITAL, Enums.CorrectionLevel.L);
+        assertEquals(data, recognizedData);
+    }
+
+    @Test
+    public void middleDigitalL2() throws NotFoundException, ChecksumException, FormatException {
+        String data = "012345678901234567890";
         String recognizedData = QRCodeGenerationAndRecognition.generateAndRecognizeQRCode(data, Enums.EncodingType.DIGITAL, Enums.CorrectionLevel.L);
         assertEquals(data, recognizedData);
     }
@@ -28,8 +42,22 @@ class DigitalTest {
     }
 
     @Test
+    public void bigDigitalL2() throws NotFoundException, ChecksumException, FormatException {
+        String data = "01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
+        String recognizedData = QRCodeGenerationAndRecognition.generateAndRecognizeQRCode(data, Enums.EncodingType.DIGITAL, Enums.CorrectionLevel.L);
+        assertEquals(data, recognizedData);
+    }
+
+    @Test
     public void smallDigitalM() throws NotFoundException, ChecksumException, FormatException {
         String data = "1";
+        String recognizedData = QRCodeGenerationAndRecognition.generateAndRecognizeQRCode(data, Enums.EncodingType.DIGITAL, Enums.CorrectionLevel.M);
+        assertEquals(data, recognizedData);
+    }
+
+    @Test
+    public void smallDigitalM2() throws NotFoundException, ChecksumException, FormatException {
+        String data = "11";
         String recognizedData = QRCodeGenerationAndRecognition.generateAndRecognizeQRCode(data, Enums.EncodingType.DIGITAL, Enums.CorrectionLevel.M);
         assertEquals(data, recognizedData);
     }
@@ -42,8 +70,22 @@ class DigitalTest {
     }
 
     @Test
+    public void middleDigitalM2() throws NotFoundException, ChecksumException, FormatException {
+        String data = "012345678901234567890";
+        String recognizedData = QRCodeGenerationAndRecognition.generateAndRecognizeQRCode(data, Enums.EncodingType.DIGITAL, Enums.CorrectionLevel.M);
+        assertEquals(data, recognizedData);
+    }
+
+    @Test
     public void bigDigitalM() throws NotFoundException, ChecksumException, FormatException {
         String data = "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789";
+        String recognizedData = QRCodeGenerationAndRecognition.generateAndRecognizeQRCode(data, Enums.EncodingType.DIGITAL, Enums.CorrectionLevel.M);
+        assertEquals(data, recognizedData);
+    }
+
+    @Test
+    public void bigDigitalM2() throws NotFoundException, ChecksumException, FormatException {
+        String data = "01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
         String recognizedData = QRCodeGenerationAndRecognition.generateAndRecognizeQRCode(data, Enums.EncodingType.DIGITAL, Enums.CorrectionLevel.M);
         assertEquals(data, recognizedData);
     }
@@ -56,8 +98,22 @@ class DigitalTest {
     }
 
     @Test
+    public void smallDigitalQ2() throws NotFoundException, ChecksumException, FormatException {
+        String data = "11";
+        String recognizedData = QRCodeGenerationAndRecognition.generateAndRecognizeQRCode(data, Enums.EncodingType.DIGITAL, Enums.CorrectionLevel.Q);
+        assertEquals(data, recognizedData);
+    }
+
+    @Test
     public void middleDigitalQ() throws NotFoundException, ChecksumException, FormatException {
         String data = "01234567890123456789";
+        String recognizedData = QRCodeGenerationAndRecognition.generateAndRecognizeQRCode(data, Enums.EncodingType.DIGITAL, Enums.CorrectionLevel.Q);
+        assertEquals(data, recognizedData);
+    }
+
+    @Test
+    public void middleDigitalQ2() throws NotFoundException, ChecksumException, FormatException {
+        String data = "012345678901234567890";
         String recognizedData = QRCodeGenerationAndRecognition.generateAndRecognizeQRCode(data, Enums.EncodingType.DIGITAL, Enums.CorrectionLevel.Q);
         assertEquals(data, recognizedData);
     }
@@ -70,8 +126,22 @@ class DigitalTest {
     }
 
     @Test
+    public void bigDigitalQ2() throws NotFoundException, ChecksumException, FormatException {
+        String data = "01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
+        String recognizedData = QRCodeGenerationAndRecognition.generateAndRecognizeQRCode(data, Enums.EncodingType.DIGITAL, Enums.CorrectionLevel.Q);
+        assertEquals(data, recognizedData);
+    }
+
+    @Test
     public void smallDigitalH() throws NotFoundException, ChecksumException, FormatException {
         String data = "1";
+        String recognizedData = QRCodeGenerationAndRecognition.generateAndRecognizeQRCode(data, Enums.EncodingType.DIGITAL, Enums.CorrectionLevel.H);
+        assertEquals(data, recognizedData);
+    }
+
+    @Test
+    public void smallDigitalH2() throws NotFoundException, ChecksumException, FormatException {
+        String data = "11";
         String recognizedData = QRCodeGenerationAndRecognition.generateAndRecognizeQRCode(data, Enums.EncodingType.DIGITAL, Enums.CorrectionLevel.H);
         assertEquals(data, recognizedData);
     }
@@ -84,9 +154,24 @@ class DigitalTest {
     }
 
     @Test
+    public void middleDigitalH2() throws NotFoundException, ChecksumException, FormatException {
+        String data = "012345678901234567890";
+        String recognizedData = QRCodeGenerationAndRecognition.generateAndRecognizeQRCode(data, Enums.EncodingType.DIGITAL, Enums.CorrectionLevel.H);
+        assertEquals(data, recognizedData);
+    }
+
+    @Test
     public void bigDigitalH() throws NotFoundException, ChecksumException, FormatException {
         String data = "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789";
         String recognizedData = QRCodeGenerationAndRecognition.generateAndRecognizeQRCode(data, Enums.EncodingType.DIGITAL, Enums.CorrectionLevel.H);
         assertEquals(data, recognizedData);
     }
+
+    @Test
+    public void bigDigitalH2() throws NotFoundException, ChecksumException, FormatException {
+        String data = "01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
+        String recognizedData = QRCodeGenerationAndRecognition.generateAndRecognizeQRCode(data, Enums.EncodingType.DIGITAL, Enums.CorrectionLevel.H);
+        assertEquals(data, recognizedData);
+    }
+
 }

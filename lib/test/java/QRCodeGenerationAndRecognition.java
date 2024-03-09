@@ -18,6 +18,9 @@ class QRCodeGenerationAndRecognition {
     ) {
         QRCodeGenerator qrCodeGenerator = new QRCodeGenerator();
         int[][] bitMatrix = qrCodeGenerator.generateBitMatrix(data, encodingType, correctionLevel);
+//        Раскомментируй следующие 2 строчки, чтобы включить создание изображений при тестировании
+//        String path = System.getProperty("user.dir") + "/lib/test/java";
+//        qrCodeGenerator.createImage(qrCodeGenerator.generateImage(bitMatrix, 1), path);
         return qrCodeGenerator.generateImage(bitMatrix, 1);
     }
 

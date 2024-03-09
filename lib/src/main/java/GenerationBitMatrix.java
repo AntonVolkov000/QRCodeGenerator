@@ -237,9 +237,12 @@ public class GenerationBitMatrix {
         int doubleColumnsNumber = (matrixSizeWEM - 1) / 2;
         bitIndex = 0;
         int y = matrixSizeWEM - 1;
+        boolean passedSyncBand = false;
         for (int i = 0; i < doubleColumnsNumber; i++) {
-            if (i == doubleColumnsNumber - LEFT_DOUBLE_COLUMNS_NUMBER) {
+            if (!passedSyncBand && i == doubleColumnsNumber - LEFT_DOUBLE_COLUMNS_NUMBER) {
                 y -= SHIFT_FOR_SINGLE_COLUMN;
+                passedSyncBand = true;
+                i--;
             } else if (i % 2 == 0) {
                 for (int j = matrixSizeWEM - 1; j >= 0; j--) {
                     fillDoubleColumn(bitMatrixWEM, bitSequence, j, y);
